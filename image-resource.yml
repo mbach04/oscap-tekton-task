@@ -1,0 +1,10 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: image-scan-resource
+  namespace: default
+spec:
+  type: image
+  params:
+    - name: url
+      value: quay.io/mbach/rstudio-centos7
