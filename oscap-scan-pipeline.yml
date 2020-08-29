@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: oscap-scan-pipeline
+spec:
+  params:
+    - name: xccdfProfile
+      description: The oscap xccdf profile to use when calling the oscap-chroot command
+    - name: oscapProfilePath
+      description: The full path to the oscap content file
+    - name: container-imagetag
+      description: Tag of the image being scanned
+  tasks:
+    - name: scan
+      taskRef: 
+        name: oscap-image-scan
+

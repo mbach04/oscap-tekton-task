@@ -1,3 +1,14 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: image-scan-resource
+  namespace: default
+spec:
+  type: image
+  params:
+    - name: url
+      value: quay.io/mbach/rstudio-centos7
+---
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
@@ -43,3 +54,44 @@ spec:
           cat $(workspaces.report.path)/report.html
           #cat /tmp/report.html
           echo "********** END OF report.html ************"
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: oscap-scan-pipeline
+spec:
+  params:
+    - name: xccdfProfile
+      description: The oscap xccdf profile to use when calling the oscap-chroot command
+    - name: oscapProfilePath
+      description: The full path to the oscap content file
+    - name: container-imagetag
+      description: Tag of the image being scanned
+  tasks:
+    - name: scan
+      taskRef: 
+        name: oscap-image-scan
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: oscap-run-
+spec:
+  pipelineRef:
+    name: oscap-scan-pipeline
+  workspaces:
+    - name: ws
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Mi
+  params:
+    - name: xccdfProfile
+      value: xccdf_org.ssgproject.content_profile_standard
+    - name: oscapProfilePath
+      value: /usr/share/xml/scap/ssg/content/ssg-centos7-ds-1.2.xml
+    - name: container-imagetag
+      value: "latest"
