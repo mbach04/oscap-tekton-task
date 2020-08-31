@@ -3,6 +3,9 @@ kind: Pipeline
 metadata:
   name: oscap-scan-pipeline
 spec:
+  resources:
+    - name: image-scan-resource
+      type: image
   params:
     - name: xccdfProfile
       description: The oscap xccdf profile to use when calling the oscap-chroot command

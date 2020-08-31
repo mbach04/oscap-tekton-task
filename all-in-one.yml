@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
   name: image-scan-resource
-  namespace: default
+  namespace: image-scan
 spec:
   type: image
   params:
@@ -75,19 +75,10 @@ spec:
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: oscap-run-
+  name: oscap-pipelinerun
 spec:
   pipelineRef:
     name: oscap-scan-pipeline
-  workspaces:
-    - name: ws
-      volumeClaimTemplate:
-        spec:
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 10Mi
   params:
     - name: xccdfProfile
       value: xccdf_org.ssgproject.content_profile_standard
@@ -95,3 +86,7 @@ spec:
       value: /usr/share/xml/scap/ssg/content/ssg-centos7-ds-1.2.xml
     - name: container-imagetag
       value: "latest"
+  resources:
+    - name: pipeline-image-source
+      resourceRef:
+        name: image-scan-resource

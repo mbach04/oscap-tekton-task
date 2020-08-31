@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
   name: image-scan-resource
-  namespace: default
+  namespace: image-scan
 spec:
   type: image
   params:
