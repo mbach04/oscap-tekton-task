@@ -12,7 +12,7 @@ spec:
       value: /usr/share/xml/scap/ssg/content/ssg-centos7-ds-1.2.xml
     - name: container-imagetag
       value: "latest"
-  resources:
-    - name: pipeline-image-source
-      resourceRef:
-        name: image-scan-resource
+  workspaces:
+    - name: report
+      persistentVolumeClaim:
+        claimName: report

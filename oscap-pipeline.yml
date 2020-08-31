@@ -3,18 +3,26 @@ kind: Pipeline
 metadata:
   name: oscap-scan-pipeline
 spec:
-  resources:
-    - name: image-scan-resource
-      type: image
+  workspaces:
+  - name: report
   params:
     - name: xccdfProfile
       description: The oscap xccdf profile to use when calling the oscap-chroot command
+      default: xccdf_org.ssgproject.content_profile_standard
     - name: oscapProfilePath
       description: The full path to the oscap content file
+      default: /usr/share/xml/scap/ssg/content/ssg-centos7-ds-1.2.xml
     - name: container-imagetag
       description: Tag of the image being scanned
+      default: "latest"
+    - name: container-image-url
+      type: string
+      description: "hostname and repo of container image to be scanned (ie quay.io/hello/world)"
+      default: "quay.io/mbach/rstudio-centos7"
   tasks:
     - name: scan
       taskRef: 
         name: oscap-image-scan
-
+      workspaces:
+        - name: report
+          workspace: report
